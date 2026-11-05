@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#0f2a1d">
+<title>Pige de Noël</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎁</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,700;1,9..144,400;1,9..144,600&family=Figtree:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --nuit: #0f2a1d;
+    --sapin: #173d2a;
+    --sapin-clair: #24573c;
+    --houx: #9e2a2b;
+    --houx-fonce: #7a1f20;
+    --or: #d9b45b;
+    --or-pale: #f0d995;
+    --papier: #fbf6ec;
+    --papier-ombre: #efe5d2;
+    --encre: #2a2620;
+    --encre-douce: #6f6553;
+    --glace: #a8d5e2;
+  }
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0;
+    min-height: 100vh;
+    font-family: Figtree, system-ui, sans-serif;
+    color: var(--papier);
+    background:
+      radial-gradient(1200px 600px at 50% -10%, #2a5a40 0%, transparent 60%),
+      radial-gradient(800px 500px at 100% 100%, #1d4632 0%, transparent 55%),
+      var(--nuit);
+    background-attachment: fixed;
+    overflow-x: hidden;
+  }
+  #neige { position: fixed; inset: 0; pointer-events: none; z-index: 0; }
+
+  main {
+    position: relative; z-index: 1;
+    max-width: 460px; margin: 0 auto;
+    padding: calc(28px + env(safe-area-inset-top)) 16px 56px;
+  }
+
+  /* ---------- En-tête ---------- */
+  header { text-align: center; margin-bottom: 26px; }
+  .etoile { display: block; margin: 0 auto 6px; width: 34px; height: 34px; filter: drop-shadow(0 0 10px rgba(240,217,149,.7)); }
+  h1 {
+    font-family: Fraunces, Georgia, serif; font-weight: 600; font-style: italic;
+    font-size: clamp(40px, 11vw, 54px); line-height: 1; margin: 0;
+    color: var(--papier); letter-spacing: -.5px;
+  }
+  h1 span { color: var(--or-pale); }
+  .sous { margin: 10px 0 0; color: #c9d8cc; font-size: 15px; }
+
+  /* ---------- Cartes « étiquettes-cadeaux » ---------- */
+  .carte {
+    position: relative;
+    background: var(--papier);
+    color: var(--encre);
+    border-radius: 16px;
+    padding: 26px 22px 24px;
+    margin-bottom: 18px;
+    box-shadow: 0 18px 40px -18px rgba(0,0,0,.6), 0 0 0 1px rgba(217,180,91,.35);
+  }
+  .carte::before {
+    content: ""; position: absolute; inset: 7px; border-radius: 11px;
+    border: 1.5px dashed rgba(158,42,43,.28); pointer-events: none;
+  }
+  .carte h2 {
+    font-family: Fraunces, Georgia, serif; font-weight: 600; font-size: 22px;
+    margin: 0 0 4px; color: var(--houx);
+  }
+  .carte p { margin: 0 0 6px; line-height: 1.5; }
+  .discret { color: var(--encre-douce); font-size: 14px; }
+
+  label { display: block; font-weight: 600; font-size: 14px; margin: 16px 0 6px; color: var(--encre); }
+  label .num {
+    display: inline-grid; place-items: center; width: 22px; height: 22px; margin-right: 6px;
+    border-radius: 50%; background: var(--houx); color: var(--papier); font-size: 12px;
+  }
+  input {
+    width: 100%; padding: 13px 14px; font: inherit; font-size: 16px;
+    color: var(--encre); background: #fff;
+    border: 1.5px solid var(--papier-ombre); border-radius: 12px;
+    transition: border-color .15s, box-shadow .15s;
+  }
+  input::placeholder { color: #b3a68e; }
+  input:focus { outline: none; border-color: var(--sapin-clair); box-shadow: 0 0 0 4px rgba(36,87,60,.15); }
+  #code {
+    text-transform: uppercase; text-align: center; letter-spacing: .35em;
+    font-family: Fraunces, Georgia, serif; font-size: 26px; font-weight: 600; padding: 14px;
+  }
+
+  .bouton {
+    display: block; width: 100%; margin-top: 20px; padding: 15px;
+    font: inherit; font-size: 16px; font-weight: 600; letter-spacing: .2px;
+    color: var(--papier); background: var(--houx);
+    border: 0; border-radius: 12px; cursor: pointer;
+    box-shadow: 0 6px 0 var(--houx-fonce), 0 10px 20px -8px rgba(158,42,43,.6);
+    transition: transform .1s, box-shadow .1s, opacity .15s;
+  }
+  .bouton:active { transform: translateY(4px); box-shadow: 0 2px 0 var(--houx-fonce); }
+  .bouton:disabled { opacity: .6; cursor: default; }
+  .lien {
+    display: block; margin: 8px auto 0; padding: 8px; background: none; border: 0;
+    font: inherit; font-size: 14px; color: #c9d8cc; text-decoration: underline; cursor: pointer;
+  }
+  .msg { min-height: 1.4em; margin: 12px 0 0; font-size: 14px; font-weight: 500; }
+  .msg.erreur { color: var(--houx); }
+  .msg.ok { color: var(--sapin-clair); }
+  .demo {
+    margin-top: 14px; padding: 10px 12px; border-radius: 10px; font-size: 13px;
+    background: rgba(217,180,91,.18); color: #6b5520; text-align: center;
+  }
+
+  /* ---------- Guirlande de progression ---------- */
+  .guirlande { width: 100%; height: 64px; margin: 6px 0 4px; overflow: visible; }
+  .fil { fill: none; stroke: #3d5a47; stroke-width: 2; }
+  .ampoule-culot { fill: #8a7d66; }
+  .ampoule { fill: #d8d0c0; transition: fill .4s; }
+  .ampoule.allumee { animation: scintille 2.4s ease-in-out infinite; }
+  .ampoule.allumee.c0 { fill: var(--houx); filter: drop-shadow(0 0 5px #e0484a); }
+  .ampoule.allumee.c1 { fill: var(--or); filter: drop-shadow(0 0 5px #f5d27a); }
+  .ampoule.allumee.c2 { fill: #2f8f5b; filter: drop-shadow(0 0 5px #5fd896); }
+  .ampoule.allumee.c3 { fill: #4aa3c0; filter: drop-shadow(0 0 5px var(--glace)); }
+  @keyframes scintille { 50% { opacity: .72; } }
+  .compte { font-family: Fraunces, Georgia, serif; font-size: 18px; font-weight: 600; color: var(--sapin); }
+
+  /* ---------- Cadeau à déballer ---------- */
+  .scene { text-align: center; padding: 6px 0 2px; }
+  .cadeau {
+    position: relative; width: 170px; height: 170px; margin: 18px auto 8px;
+    background: none; border: 0; padding: 0; cursor: pointer;
+    animation: sautille 2.2s ease-in-out infinite;
+  }
+  .boite {
+    position: absolute; left: 10px; right: 10px; bottom: 0; height: 110px;
+    background: linear-gradient(90deg, transparent 42%, var(--or) 42%, var(--or) 58%, transparent 58%), var(--houx);
+    border-radius: 6px; box-shadow: inset 0 -12px 0 rgba(0,0,0,.12);
+  }
+  .couvercle {
+    position: absolute; left: 0; right: 0; top: 32px; height: 36px;
+    background: linear-gradient(90deg, transparent 42%, var(--or-pale) 42%, var(--or-pale) 58%, transparent 58%), #b83234;
+    border-radius: 6px; box-shadow: 0 6px 10px -4px rgba(0,0,0,.35);
+    transition: transform .7s cubic-bezier(.3,1.6,.5,1), opacity .5s .3s;
+  }
+  .noeud { position: absolute; left: 50%; top: -26px; width: 0; height: 0; }
+  .noeud::before, .noeud::after {
+    content: ""; position: absolute; top: 0; width: 38px; height: 28px;
+    border: 7px solid var(--or-pale); border-radius: 50%;
+  }
+  .noeud::before { right: 2px; transform: rotate(-18deg); }
+  .noeud::after { left: 2px; transform: rotate(18deg); }
+  .cadeau.ouvert { animation: none; cursor: default; }
+  .cadeau.ouvert .couvercle { transform: translateY(-90px) rotate(-24deg); opacity: 0; }
+  .cadeau.ouvert .boite { transition: opacity .4s .5s; opacity: 0; }
+  @keyframes sautille { 0%,100% { transform: translateY(0) } 8% { transform: translateY(-8px) rotate(-3deg) } 16% { transform: translateY(0) rotate(2deg) } 22% { transform: rotate(0) } }
+  .indice { color: var(--encre-douce); font-size: 14px; font-style: italic; font-family: Fraunces, Georgia, serif; }
+
+  .revelation { display: none; text-align: center; }
+  .revelation.visible { display: block; animation: apparait .7s .45s both cubic-bezier(.2,.9,.3,1.2); }
+  @keyframes apparait { from { opacity: 0; transform: scale(.85) translateY(10px); } }
+  .pour { margin: 0; color: var(--encre-douce); }
+  .nom-pige {
+    font-family: Fraunces, Georgia, serif; font-weight: 700; font-style: italic;
+    font-size: clamp(36px, 10vw, 46px); line-height: 1.05; color: var(--houx);
+    margin: 4px 0 18px;
+  }
+  .idees { list-style: none; margin: 0 0 14px; padding: 0; text-align: left; }
+  .idees li {
+    position: relative; padding: 12px 14px 12px 44px; margin-bottom: 8px;
+    background: #fff; border-radius: 12px; border: 1px solid var(--papier-ombre); line-height: 1.4;
+  }
+  .idees li::before {
+    content: "🎁"; position: absolute; left: 13px; top: 11px; font-size: 18px;
+  }
+  .details { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin-top: 6px; }
+  .pastille {
+    padding: 6px 12px; border-radius: 999px; font-size: 13px; font-weight: 500;
+    background: rgba(36,87,60,.1); color: var(--sapin);
+  }
+  .chut { margin-top: 14px !important; font-family: Fraunces, Georgia, serif; font-style: italic; color: var(--encre-douce); }
+
+  footer { text-align: center; color: #7f9a88; font-size: 12px; margin-top: 26px; }
+  [hidden] { display: none !important; }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation: none !important; transition: none !important; }
+  }
+</style>
+</head>
+<body>
+<canvas id="neige" aria-hidden="true"></canvas>
+
+<main>
+  <header>
+    <svg class="etoile" viewBox="0 0 24 24" aria-hidden="true"><path fill="#f0d995" d="M12 1.8l2.9 6.6 7.2.6-5.5 4.7 1.7 7-6.3-3.8-6.3 3.8 1.7-7L1.9 9l7.2-.6z"/></svg>
+    <h1>Pige de <span>Noël</span></h1>
+    <p class="sous" id="sous">Entre ton code pour commencer.</p>
+  </header>
+
+  <!-- Connexion -->
+  <section class="carte" id="vueCode">
+    <h2>Bienvenue!</h2>
+    <p class="discret">Ton code personnel se trouve dans le courriel d’invitation.</p>
+    <label for="code">Ton code</label>
+    <input id="code" autocomplete="off" autocapitalize="characters" spellcheck="false" maxlength="12" placeholder="••••••">
+    <button class="bouton" id="btnCode">Entrer</button>
+    <p class="msg erreur" id="errCode" role="alert"></p>
+    <p class="demo" id="demo" hidden>Mode démo : essaie <strong>DEMO1</strong> (avant la pige) ou <strong>DEMO2</strong> (après la pige).</p>
+  </section>
+
+  <!-- Cadeau -->
+  <section class="carte" id="vuePigee" hidden>
+    <div class="scene" id="scene">
+      <h2>La pige est faite!</h2>
+      <button class="cadeau" id="cadeau" aria-label="Ouvrir le cadeau">
+        <span class="boite"></span>
+        <span class="couvercle"><span class="noeud"></span></span>
+      </button>
+      <p class="indice" id="indice">Touche le cadeau pour découvrir qui tu as pigé</p>
+    </div>
+    <div class="revelation" id="revelation">
+      <p class="pour">Cette année, tu gâtes</p>
+      <p class="nom-pige" id="pNom"></p>
+      <ul class="idees" id="pChoix"></ul>
+      <div class="details" id="pDetails"></div>
+      <p class="chut">Chut… c’est un secret! 🤫</p>
+    </div>
+  </section>
+
+  <!-- Choix -->
+  <section class="carte" id="vueChoix" hidden>
+    <h2 id="salut"></h2>
+    <p class="discret">Inscris trois idées de cadeaux. Tu peux les modifier jusqu’à la pige.</p>
+    <label for="c1"><span class="num">1</span>Première idée</label>
+    <input id="c1" maxlength="300" placeholder="Un livre, un jeu, une expérience…">
+    <label for="c2"><span class="num">2</span>Deuxième idée</label>
+    <input id="c2" maxlength="300">
+    <label for="c3"><span class="num">3</span>Troisième idée</label>
+    <input id="c3" maxlength="300">
+    <button class="bouton" id="btnSave">Enregistrer mes idées</button>
+    <p class="msg" id="msgSave" role="status"></p>
+  </section>
+
+  <!-- Progression -->
+  <section class="carte" id="vueProgres" hidden>
+    <h2>La guirlande s’allume</h2>
+    <svg class="guirlande" id="guirlande" viewBox="0 0 320 64" preserveAspectRatio="none" aria-hidden="true"></svg>
+    <p><span class="compte" id="compte"></span></p>
+    <p class="discret" id="attente"></p>
+  </section>
+
+  <button class="lien" id="btnSortir" hidden>Changer de code</button>
+  <footer>Fait avec amour pour la famille ❄</footer>
+</main>
+
+<script src="config.js"></script>
+<script>
+(() => {
+  const $ = id => document.getElementById(id);
+  const API = ((window.PIGE_CONFIG || {}).API_URL || '').trim();
+  let code = '';
+
+  /* ---------- Mémoire locale (facultative) ---------- */
+  const memoire = {
+    lire(k) { try { return localStorage.getItem(k) || ''; } catch (e) { return ''; } },
+    ecrire(k, v) { try { v ? localStorage.setItem(k, v) : localStorage.removeItem(k); } catch (e) {} },
+  };
+
+  /* ---------- Appels au moteur Apps Script ---------- */
+  async function appel(action, params) {
+    if (!API) return demo(action, params);
+    const r = await fetch(API, { method: 'POST', body: JSON.stringify({ action, ...params }) });
+    if (!r.ok) throw new Error('Le serveur ne répond pas. Réessaie dans un instant.');
+    const j = await r.json();
+    if (!j.ok) throw new Error(j.erreur || 'Erreur inconnue.');
+    return j.data;
+  }
+
+  /* ---------- Mode démo (aucun serveur) ---------- */
+  const fausses = {
+    DEMO1: { nom: 'Guillaume', choix: ['', '', ''], inscrits: 5, total: 8, enAttente: ['Guillaume', 'Clara', 'Charles'], pigeFaite: false, pigee: null },
+    DEMO2: { nom: 'Clara', choix: ['Un roman graphique', 'Des patins', 'Un atelier de poterie'], inscrits: 8, total: 8, enAttente: [], pigeFaite: true,
+             pigee: { nom: 'Grand-papa', choix: ['Un bon café torréfié', 'Une casquette chaude', 'Un casse-tête de 1000 morceaux'] } },
+  };
+  async function demo(action, p) {
+    await new Promise(r => setTimeout(r, 450));
+    const s = fausses[String(p.code || '').toUpperCase()];
+    if (!s) throw new Error('Code invalide.');
+    if (action === 'enregistrer' && !s.pigeFaite) {
+      const deja = s.choix.every(Boolean);
+      s.choix = p.choix;
+      if (!deja) { s.inscrits++; s.enAttente = s.enAttente.filter(n => n !== s.nom); }
+    }
+    return { ...s, budget: '50 $', dateEchange: '24 décembre' };
+  }
+
+  /* ---------- Affichage ---------- */
+  function msg(t, c) { $('msgSave').textContent = t; $('msgSave').className = 'msg ' + (c || ''); }
+
+  function guirlande(total, allumees) {
+    const svg = $('guirlande');
+    const ns = 'http://www.w3.org/2000/svg';
+    svg.replaceChildren();
+    const n = Math.max(total, 1);
+    const pts = [];
+    for (let i = 0; i < n; i++) {
+      const x = 20 + (280 * (n === 1 ? .5 : i / (n - 1)));
+      pts.push([x, 18 + 16 * Math.sin((x / 320) * Math.PI)]);
+    }
+    const fil = document.createElementNS(ns, 'path');
+    fil.setAttribute('class', 'fil');
+    fil.setAttribute('d', 'M0 8 Q160 52 320 8');
+    svg.appendChild(fil);
+    pts.forEach(([x], i) => {
+      const y = 8 + 22 * (1 - Math.pow((x - 160) / 160, 2));
+      const g = document.createElementNS(ns, 'g');
+      g.innerHTML = '<rect class="ampoule-culot" x="' + (x - 3) + '" y="' + (y - 1) + '" width="6" height="6" rx="1"/>' +
+        '<ellipse class="ampoule c' + (i % 4) + (i < allumees ? ' allumee' : '') + '" cx="' + x + '" cy="' + (y + 15) +
+        '" rx="7" ry="11" style="animation-delay:' + (i * .3) + 's"/>';
+      svg.appendChild(g);
+    });
+  }
+
+  function afficher(s) {
+    $('vueCode').hidden = true;
+    $('btnSortir').hidden = false;
+    $('salut').textContent = 'Bonjour ' + s.nom + '!';
+    ['c1', 'c2', 'c3'].forEach((id, i) => { $(id).value = s.choix[i] || ''; });
+
+    if (s.pigeFaite && s.pigee) {
+      $('sous').textContent = 'Joyeux Noël, ' + s.nom + '!';
+      $('vueChoix').hidden = true;
+      $('vueProgres').hidden = true;
+      $('vuePigee').hidden = false;
+      $('pNom').textContent = s.pigee.nom;
+      const ul = $('pChoix');
+      ul.replaceChildren();
+      (s.pigee.choix.length ? s.pigee.choix : ['Aucune idée inscrite']).forEach(c => {
+        const li = document.createElement('li'); li.textContent = c; ul.appendChild(li);
+      });
+      const d = $('pDetails');
+      d.replaceChildren();
+      [s.budget && '💰 ' + s.budget, s.dateEchange && '📅 ' + s.dateEchange].filter(Boolean).forEach(t => {
+        const sp = document.createElement('span'); sp.className = 'pastille'; sp.textContent = t; d.appendChild(sp);
+      });
+      if (memoire.lire('pigeOuverte') === code) ouvrir(true);
+      return;
+    }
+
+    $('sous').textContent = 'Les idées restent modifiables jusqu’à la pige.';
+    $('vuePigee').hidden = true;
+    $('vueChoix').hidden = false;
+    $('vueProgres').hidden = false;
+    guirlande(s.total, s.inscrits);
+    $('compte').textContent = s.inscrits + ' sur ' + s.total + ' ont inscrit leurs idées';
+    $('attente').textContent = s.enAttente.length
+      ? 'On attend encore : ' + s.enAttente.join(', ') + '. La pige se fera toute seule quand la guirlande sera complète.'
+      : 'Tout le monde est prêt : la pige se fait!';
+  }
+
+  function ouvrir(instantane) {
+    const c = $('cadeau');
+    if (c.classList.contains('ouvert')) return;
+    memoire.ecrire('pigeOuverte', code);
+    if (instantane) { $('scene').hidden = true; $('revelation').classList.add('visible'); $('revelation').style.animation = 'none'; return; }
+    c.classList.add('ouvert');
+    $('indice').hidden = true;
+    $('revelation').classList.add('visible');
+    setTimeout(() => { $('scene').hidden = true; }, 900);
+  }
+
+  /* ---------- Actions ---------- */
+  async function entrer(c) {
+    c = (c || '').trim().toUpperCase().replace(/[^A-Z0-9]/g, '');
+    if (!c) return;
+    $('btnCode').disabled = true;
+    $('btnCode').textContent = 'Un instant…';
+    $('errCode').textContent = '';
+    try {
+      const s = await appel('connexion', { code: c });
+      code = c;
+      memoire.ecrire('pigeCode', c);
+      afficher(s);
+    } catch (e) {
+      memoire.ecrire('pigeCode', '');
+      $('code').value = c;
+      $('vueCode').hidden = false;
+      $('errCode').textContent = e.message;
+    } finally {
+      $('btnCode').disabled = false;
+      $('btnCode').textContent = 'Entrer';
+    }
+  }
+
+  async function enregistrer() {
+    const choix = ['c1', 'c2', 'c3'].map(id => $(id).value.trim());
+    if (!choix.every(Boolean)) return msg('Remplis les trois idées.', 'erreur');
+    $('btnSave').disabled = true;
+    msg('Enregistrement…');
+    try {
+      const s = await appel('enregistrer', { code, choix });
+      afficher(s);
+      msg(s.pigeFaite ? '' : 'Tes idées sont enregistrées ✔', 'ok');
+    } catch (e) {
+      msg(e.message, 'erreur');
+    } finally {
+      $('btnSave').disabled = false;
+    }
+  }
+
+  function sortir() {
+    code = '';
+    memoire.ecrire('pigeCode', '');
+    ['vueChoix', 'vueProgres', 'vuePigee', 'btnSortir'].forEach(id => { $(id).hidden = true; });
+    $('scene').hidden = false;
+    $('cadeau').classList.remove('ouvert');
+    $('indice').hidden = false;
+    $('revelation').classList.remove('visible');
+    $('vueCode').hidden = false;
+    $('code').value = '';
+    $('sous').textContent = 'Entre ton code pour commencer.';
+    msg('');
+  }
+
+  $('btnCode').addEventListener('click', () => entrer($('code').value));
+  $('code').addEventListener('keydown', e => { if (e.key === 'Enter') entrer($('code').value); });
+  $('btnSave').addEventListener('click', enregistrer);
+  $('btnSortir').addEventListener('click', sortir);
+  $('cadeau').addEventListener('click', () => ouvrir(false));
+  $('demo').hidden = !!API;
+
+  const depuisLien = new URLSearchParams(location.search).get('code');
+  if (depuisLien) history.replaceState(null, '', location.pathname); // retire le code de la barre d'adresse
+  const depart = depuisLien || memoire.lire('pigeCode');
+  if (depart) entrer(depart);
+
+  /* ---------- Neige ---------- */
+  const cv = $('neige');
+  const ctx = cv.getContext('2d');
+  const calme = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let flocons = [], W = 0, H = 0;
+  function taille() {
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    W = innerWidth; H = innerHeight;
+    cv.width = W * dpr; cv.height = H * dpr;
+    cv.style.width = W + 'px'; cv.style.height = H + 'px';
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    const n = Math.round(Math.min(110, W * H / 9000));
+    flocons = Array.from({ length: n }, () => ({
+      x: Math.random() * W, y: Math.random() * H,
+      r: .8 + Math.random() * 2.4, v: .3 + Math.random() * .9,
+      d: Math.random() * Math.PI * 2, o: .35 + Math.random() * .55,
+    }));
+  }
+  function dessiner() {
+    ctx.clearRect(0, 0, W, H);
+    for (const f of flocons) {
+      if (!calme) {
+        f.y += f.v; f.d += .01; f.x += Math.sin(f.d) * .35;
+        if (f.y > H + 5) { f.y = -5; f.x = Math.random() * W; }
+      }
+      ctx.globalAlpha = f.o;
+      ctx.fillStyle = '#fff';
+      ctx.beginPath(); ctx.arc(f.x, f.y, f.r, 0, Math.PI * 2); ctx.fill();
+    }
+    if (!calme) requestAnimationFrame(dessiner);
+  }
+  addEventListener('resize', taille);
+  taille(); dessiner();
+})();
+</script>
+</body>
+</html>
