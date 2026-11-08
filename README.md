@@ -25,11 +25,20 @@ et personne ne pige la même personne que l’an dernier.
    *Exécuter en tant que* **Moi**, *Qui a accès* **Tout le monde**. Copie l’URL (se termine par `/exec`).
 5. Sur GitHub, colle cette URL dans `config.js` (`API_URL`) et enregistre.
 
-## 3. Préparer la famille
+## 3. Ajouter les personnages (facultatif, fichier privé)
+Les personnages dessinés de la famille ne sont **pas** dans ce dépôt public.
+Ils vivent dans un fichier `Avatars.gs` gardé à part :
+dans Apps Script, clique **+ > Script**, nomme-le `Avatars` et colles-y son contenu.
+Le site ne reçoit un personnage qu’après l’entrée d’un code valide. Sans ce fichier, tout fonctionne quand même,
+avec la guirlande d’ampoules.
+
+## 4. Préparer la famille
 Dans la feuille, recharge la page : un menu **🎁 Pige de Noël** apparaît.
 1. **Préparer les onglets**, puis remplis *Nom*, *Courriel* et *Conjoint(e)* dans **Participants**
    (le nom du conjoint doit être identique à la colonne *Nom*; un seul côté du couple suffit).
-2. **Générer les codes**.
+   Si tu as reçu un fichier `participants.csv` avec les codes déjà générés : dans l’onglet **Participants**,
+   **Fichier > Importer > Importer > Remplacer la feuille actuelle**, puis ajoute les courriels.
+2. **Générer les codes** (ne touche pas aux codes déjà présents).
 3. Première année : inscris la pige de l’an dernier dans **Historique** (Année, Donneur, Receveur).
 4. **Vérifier qu’une pige est possible**, puis **Envoyer les invitations** : chacun reçoit un lien personnel.
 

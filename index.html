@@ -119,7 +119,37 @@
     background: rgba(217,180,91,.18); color: #6b5520; text-align: center;
   }
 
-  /* ---------- Guirlande de progression ---------- */
+  /* ---------- Personnages animés ---------- */
+  .bonhomme { display: block; position: relative; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+  .bonhomme svg { display: block; width: 100%; height: auto; overflow: visible;
+    transform-origin: 50% 96%; animation: respire 3.4s ease-in-out infinite; }
+  .bonhomme.saute svg { animation: saute .75s cubic-bezier(.3,1.5,.5,1); }
+  @keyframes respire {
+    0%, 100% { transform: translateY(0) rotate(0); }
+    25% { transform: translateY(-3px) rotate(-1.4deg); }
+    75% { transform: translateY(-3px) rotate(1.4deg); }
+  }
+  @keyframes saute {
+    0% { transform: translateY(0) scale(1); }
+    18% { transform: translateY(2px) scale(1.04, .95); }
+    45% { transform: translateY(-28px) rotate(-5deg) scale(1.03); }
+    72% { transform: translateY(0) scale(1.03, .96); }
+    100% { transform: translateY(0) scale(1); }
+  }
+  .eclat {
+    position: absolute; left: 50%; top: 40%; width: 8px; height: 8px; border-radius: 2px;
+    pointer-events: none; animation: eclat .9s ease-out forwards;
+  }
+  @keyframes eclat {
+    from { transform: translate(-50%, -50%) rotate(0); opacity: 1; }
+    to { transform: translate(calc(-50% + var(--dx)), calc(-50% + var(--dy))) rotate(220deg); opacity: 0; }
+  }
+
+  .salut { display: flex; align-items: center; gap: 12px; margin-bottom: 6px; }
+  .salut .bonhomme { width: 92px; flex: 0 0 92px; margin: -12px 0 -6px -6px; }
+  .salut h2 { margin: 0; }
+
+  /* ---------- Guirlande de visages ---------- */
   .guirlande { width: 100%; height: 64px; margin: 6px 0 4px; overflow: visible; }
   .fil { fill: none; stroke: #3d5a47; stroke-width: 2; }
   .ampoule-culot { fill: #8a7d66; }
@@ -130,6 +160,32 @@
   .ampoule.allumee.c2 { fill: #2f8f5b; filter: drop-shadow(0 0 5px #5fd896); }
   .ampoule.allumee.c3 { fill: #4aa3c0; filter: drop-shadow(0 0 5px var(--glace)); }
   @keyframes scintille { 50% { opacity: .72; } }
+
+  .visages {
+    list-style: none; margin: 14px 0 8px; padding: 0;
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(62px, 1fr)); gap: 12px 6px;
+  }
+  .visage { text-align: center; font-size: 11.5px; color: var(--encre-douce); line-height: 1.2; }
+  .visage .rond {
+    width: 56px; height: 56px; margin: 0 auto 5px; border-radius: 50%; overflow: hidden;
+    background: #e9dfcb; border: 2.5px solid #d8cdb7; position: relative;
+  }
+  .visage .rond svg { width: 100%; height: 100%; display: block; }
+  .visage.attente .rond svg { filter: grayscale(1); opacity: .42; }
+  .visage.pret { color: var(--encre); font-weight: 600; }
+  .visage.pret .rond {
+    background: #fff3d6; border-color: var(--or);
+    animation: lueur 2.6s ease-in-out infinite;
+  }
+  .visage.pret .rond::after {
+    content: "✓"; position: absolute; right: -1px; bottom: -1px; width: 18px; height: 18px;
+    border-radius: 50%; background: var(--sapin-clair); color: #fff; font-size: 11px;
+    display: grid; place-items: center; font-weight: 700;
+  }
+  @keyframes lueur {
+    0%, 100% { box-shadow: 0 0 0 3px rgba(217,180,91,.18), 0 0 8px rgba(240,217,149,.35); }
+    50% { box-shadow: 0 0 0 3px rgba(217,180,91,.3), 0 0 18px rgba(240,217,149,.9); }
+  }
   .compte { font-family: Fraunces, Georgia, serif; font-size: 18px; font-weight: 600; color: var(--sapin); }
 
   /* ---------- Cadeau à déballer ---------- */
@@ -164,8 +220,11 @@
   .indice { color: var(--encre-douce); font-size: 14px; font-style: italic; font-family: Fraunces, Georgia, serif; }
 
   .revelation { display: none; text-align: center; }
-  .revelation.visible { display: block; animation: apparait .7s .45s both cubic-bezier(.2,.9,.3,1.2); }
-  @keyframes apparait { from { opacity: 0; transform: scale(.85) translateY(10px); } }
+  .revelation.visible { display: block; animation: apparait .6s .2s both cubic-bezier(.2,.9,.3,1.2); }
+  @keyframes apparait { from { opacity: 0; transform: translateY(10px); } }
+  .revelation .bonhomme { width: min(230px, 70%); margin: -8px auto 4px; }
+  .revelation.visible .bonhomme { animation: surgit .9s .15s both cubic-bezier(.25,1.6,.45,1); }
+  @keyframes surgit { from { opacity: 0; transform: translateY(90px) scale(.35); } }
   .pour { margin: 0; color: var(--encre-douce); }
   .nom-pige {
     font-family: Fraunces, Georgia, serif; font-weight: 700; font-style: italic;
@@ -227,6 +286,7 @@
       <p class="indice" id="indice">Touche le cadeau pour découvrir qui tu as pigé</p>
     </div>
     <div class="revelation" id="revelation">
+      <div class="bonhomme" id="pAvatar" hidden></div>
       <p class="pour">Cette année, tu gâtes</p>
       <p class="nom-pige" id="pNom"></p>
       <ul class="idees" id="pChoix"></ul>
@@ -237,7 +297,10 @@
 
   <!-- Choix -->
   <section class="carte" id="vueChoix" hidden>
-    <h2 id="salut"></h2>
+    <div class="salut">
+      <div class="bonhomme" id="monAvatar" hidden title="Touche-moi!"></div>
+      <h2 id="salut"></h2>
+    </div>
     <p class="discret">Inscris trois idées de cadeaux. Tu peux les modifier jusqu’à la pige.</p>
     <label for="c1"><span class="num">1</span>Première idée</label>
     <input id="c1" maxlength="300" placeholder="Un livre, un jeu, une expérience…">
@@ -253,6 +316,7 @@
   <section class="carte" id="vueProgres" hidden>
     <h2>La guirlande s’allume</h2>
     <svg class="guirlande" id="guirlande" viewBox="0 0 320 64" preserveAspectRatio="none" aria-hidden="true"></svg>
+    <ul class="visages" id="visages" hidden></ul>
     <p><span class="compte" id="compte"></span></p>
     <p class="discret" id="attente"></p>
   </section>
@@ -267,6 +331,7 @@
   const $ = id => document.getElementById(id);
   const API = ((window.PIGE_CONFIG || {}).API_URL || '').trim();
   let code = '';
+  let instance = 0;
 
   /* ---------- Mémoire locale (facultative) ---------- */
   const memoire = {
@@ -284,23 +349,81 @@
     return j.data;
   }
 
-  /* ---------- Mode démo (aucun serveur) ---------- */
+  /* ---------- Mode démo (aucun serveur, aucun vrai nom) ---------- */
+  const bonhommeDeNeige = foulard => '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 300">' +
+    '<ellipse cx="120" cy="294" rx="70" ry="6" fill="#000" opacity=".15"/>' +
+    '<circle cx="120" cy="246" r="56" fill="#fdfbf7" stroke="#dfe7ea" stroke-width="3"/>' +
+    '<circle cx="120" cy="132" r="54" fill="#fdfbf7" stroke="#dfe7ea" stroke-width="3"/>' +
+    '<g fill="#2a2620"><circle cx="120" cy="226" r="5"/><circle cx="120" cy="250" r="5"/><circle cx="120" cy="274" r="5"/>' +
+    '<circle cx="102" cy="122" r="5"/><circle cx="138" cy="122" r="5"/></g>' +
+    '<path d="M120 134 l34 8 -34 6z" fill="#e2741f"/>' +
+    '<path d="M98 156 q22 14 44 0" fill="none" stroke="#2a2620" stroke-width="3.5" stroke-linecap="round"/>' +
+    '<ellipse cx="94" cy="146" rx="8" ry="5" fill="#ec7f86" opacity=".45"/><ellipse cx="146" cy="146" rx="8" ry="5" fill="#ec7f86" opacity=".45"/>' +
+    '<path d="M70 184 q50 22 100 0 l2 16 q-52 22 -104 0z" fill="' + foulard + '"/><path d="M148 192 l10 44 h-18 l-6 -40z" fill="' + foulard + '"/>' +
+    '<rect x="84" y="56" width="72" height="34" rx="4" fill="#1e1e22"/><rect x="66" y="86" width="108" height="10" rx="4" fill="#1e1e22"/>' +
+    '<rect x="84" y="78" width="72" height="8" fill="' + foulard + '"/></svg>';
   const fausses = {
-    DEMO1: { nom: 'Guillaume', choix: ['', '', ''], inscrits: 5, total: 8, enAttente: ['Guillaume', 'Clara', 'Charles'], pigeFaite: false, pigee: null },
-    DEMO2: { nom: 'Clara', choix: ['Un roman graphique', 'Des patins', 'Un atelier de poterie'], inscrits: 8, total: 8, enAttente: [], pigeFaite: true,
-             pigee: { nom: 'Grand-papa', choix: ['Un bon café torréfié', 'Une casquette chaude', 'Un casse-tête de 1000 morceaux'] } },
+    DEMO1: { nom: 'Lutin', choix: ['', '', ''], pigeFaite: false, pigee: null,
+             famille: [['Lutin', 0, '#9e2a2b'], ['Comète', 1, '#2f7a4c'], ['Tornade', 1, '#2f86c9'], ['Cupidon', 0, '#e2741f'],
+                       ['Furie', 1, '#a3264a'], ['Danseur', 1, '#d9b45b'], ['Éclair', 0, '#173d2a'], ['Fringant', 1, '#6b4a2f']] },
+    DEMO2: { nom: 'Comète', choix: ['Un roman graphique', 'Des patins', 'Un atelier de poterie'], pigeFaite: true,
+             pigee: { nom: 'Rodolphe', choix: ['Un bon café torréfié', 'Une casquette chaude', 'Un casse-tête de 1000 morceaux'] },
+             famille: [] },
   };
   async function demo(action, p) {
     await new Promise(r => setTimeout(r, 450));
     const s = fausses[String(p.code || '').toUpperCase()];
     if (!s) throw new Error('Code invalide.');
     if (action === 'enregistrer' && !s.pigeFaite) {
-      const deja = s.choix.every(Boolean);
       s.choix = p.choix;
-      if (!deja) { s.inscrits++; s.enAttente = s.enAttente.filter(n => n !== s.nom); }
+      s.famille.forEach(f => { if (f[0] === s.nom) f[1] = 1; });
     }
-    return { ...s, budget: '50 $', dateEchange: '24 décembre' };
+    const famille = s.famille.map(([nom, ok, c]) => ({ nom, inscrit: !!ok, avatar: bonhommeDeNeige(c) }));
+    return {
+      nom: s.nom, choix: s.choix, pigeFaite: s.pigeFaite,
+      avatar: s.pigeFaite ? '' : bonhommeDeNeige('#9e2a2b'),
+      pigee: s.pigee && { ...s.pigee, avatar: bonhommeDeNeige('#c62f33') },
+      famille, total: famille.length || 8, inscrits: famille.filter(f => f.inscrit).length || 8,
+      enAttente: famille.filter(f => !f.inscrit).map(f => f.nom),
+      budget: '50 $', dateEchange: '24 décembre',
+    };
   }
+
+  /* ---------- Personnages ---------- */
+  // Rend les identifiants internes uniques : un même personnage peut apparaître deux fois.
+  function preparer(svg) {
+    if (!svg || /<script|\son\w+\s*=|javascript:/i.test(svg)) return '';
+    const s = 'i' + (++instance);
+    return svg.replace(/id="([^"]+)"/g, 'id="$1-' + s + '"')
+              .replace(/url\(#([^)]+)\)/g, 'url(#$1-' + s + ')')
+              .replace(/href="#([^"]+)"/g, 'href="#$1-' + s + '"');
+  }
+  function placer(el, svg) {
+    const html = preparer(svg);
+    el.innerHTML = html;
+    el.hidden = !html;
+    return !!html;
+  }
+  function sauter(el) {
+    if (!el || el.hidden) return;
+    el.classList.remove('saute'); void el.offsetWidth; el.classList.add('saute');
+    const couleurs = ['#9e2a2b', '#d9b45b', '#2f8f5b', '#4aa3c0', '#f0d995'];
+    for (let i = 0; i < 14; i++) {
+      const e = document.createElement('span');
+      const a = (Math.PI * 2 * i) / 14, d = 55 + Math.random() * 35;
+      e.className = 'eclat';
+      e.style.background = couleurs[i % couleurs.length];
+      e.style.setProperty('--dx', Math.cos(a) * d + 'px');
+      e.style.setProperty('--dy', Math.sin(a) * d - 20 + 'px');
+      el.appendChild(e);
+      setTimeout(() => e.remove(), 950);
+    }
+  }
+  $('monAvatar').addEventListener('click', () => sauter($('monAvatar')));
+  $('pAvatar').addEventListener('click', () => sauter($('pAvatar')));
+  ['monAvatar', 'pAvatar'].forEach(id => $(id).addEventListener('animationend', e => {
+    if (e.animationName === 'saute') $(id).classList.remove('saute');
+  }));
 
   /* ---------- Affichage ---------- */
   function msg(t, c) { $('msgSave').textContent = t; $('msgSave').className = 'msg ' + (c || ''); }
@@ -310,22 +433,42 @@
     const ns = 'http://www.w3.org/2000/svg';
     svg.replaceChildren();
     const n = Math.max(total, 1);
-    const pts = [];
-    for (let i = 0; i < n; i++) {
-      const x = 20 + (280 * (n === 1 ? .5 : i / (n - 1)));
-      pts.push([x, 18 + 16 * Math.sin((x / 320) * Math.PI)]);
-    }
     const fil = document.createElementNS(ns, 'path');
     fil.setAttribute('class', 'fil');
     fil.setAttribute('d', 'M0 8 Q160 52 320 8');
     svg.appendChild(fil);
-    pts.forEach(([x], i) => {
+    for (let i = 0; i < n; i++) {
+      const x = 20 + (280 * (n === 1 ? .5 : i / (n - 1)));
       const y = 8 + 22 * (1 - Math.pow((x - 160) / 160, 2));
       const g = document.createElementNS(ns, 'g');
       g.innerHTML = '<rect class="ampoule-culot" x="' + (x - 3) + '" y="' + (y - 1) + '" width="6" height="6" rx="1"/>' +
         '<ellipse class="ampoule c' + (i % 4) + (i < allumees ? ' allumee' : '') + '" cx="' + x + '" cy="' + (y + 15) +
         '" rx="7" ry="11" style="animation-delay:' + (i * .3) + 's"/>';
       svg.appendChild(g);
+    }
+  }
+
+  function visages(famille) {
+    const ul = $('visages');
+    ul.replaceChildren();
+    const avecPersonnages = (famille || []).some(f => f.avatar);
+    ul.hidden = !avecPersonnages;
+    $('guirlande').style.display = avecPersonnages ? 'none' : '';
+    if (!avecPersonnages) return;
+    // ceux qui ont répondu d'abord
+    famille.slice().sort((a, b) => b.inscrit - a.inscrit).forEach((f, i) => {
+      const li = document.createElement('li');
+      li.className = 'visage ' + (f.inscrit ? 'pret' : 'attente');
+      const rond = document.createElement('div');
+      rond.className = 'rond';
+      rond.innerHTML = preparer(f.avatar);
+      const s = rond.querySelector('svg');
+      if (s) { s.setAttribute('viewBox', '60 34 120 160'); s.setAttribute('preserveAspectRatio', 'xMidYMid slice'); }
+      rond.style.animationDelay = (i * .25) + 's';
+      const nom = document.createElement('span');
+      nom.textContent = f.nom;
+      li.append(rond, nom);
+      ul.appendChild(li);
     });
   }
 
@@ -341,6 +484,7 @@
       $('vueProgres').hidden = true;
       $('vuePigee').hidden = false;
       $('pNom').textContent = s.pigee.nom;
+      placer($('pAvatar'), s.pigee.avatar);
       const ul = $('pChoix');
       ul.replaceChildren();
       (s.pigee.choix.length ? s.pigee.choix : ['Aucune idée inscrite']).forEach(c => {
@@ -359,10 +503,12 @@
     $('vuePigee').hidden = true;
     $('vueChoix').hidden = false;
     $('vueProgres').hidden = false;
+    if (!$('monAvatar').childElementCount) placer($('monAvatar'), s.avatar);
     guirlande(s.total, s.inscrits);
+    visages(s.famille);
     $('compte').textContent = s.inscrits + ' sur ' + s.total + ' ont inscrit leurs idées';
     $('attente').textContent = s.enAttente.length
-      ? 'On attend encore : ' + s.enAttente.join(', ') + '. La pige se fera toute seule quand la guirlande sera complète.'
+      ? 'On attend encore : ' + s.enAttente.join(', ') + '. La pige se fera toute seule quand tout le monde sera allumé.'
       : 'Tout le monde est prêt : la pige se fait!';
   }
 
@@ -370,11 +516,20 @@
     const c = $('cadeau');
     if (c.classList.contains('ouvert')) return;
     memoire.ecrire('pigeOuverte', code);
-    if (instantane) { $('scene').hidden = true; $('revelation').classList.add('visible'); $('revelation').style.animation = 'none'; return; }
+    if (instantane) {
+      $('scene').hidden = true;
+      $('revelation').classList.add('visible');
+      $('revelation').style.animation = 'none';
+      $('pAvatar').style.animation = 'none';
+      return;
+    }
     c.classList.add('ouvert');
     $('indice').hidden = true;
-    $('revelation').classList.add('visible');
-    setTimeout(() => { $('scene').hidden = true; }, 900);
+    setTimeout(() => {
+      $('scene').hidden = true;
+      $('revelation').classList.add('visible');
+      setTimeout(() => sauter($('pAvatar')), 1000);
+    }, 650);
   }
 
   /* ---------- Actions ---------- */
@@ -409,6 +564,7 @@
       const s = await appel('enregistrer', { code, choix });
       afficher(s);
       msg(s.pigeFaite ? '' : 'Tes idées sont enregistrées ✔', 'ok');
+      if (!s.pigeFaite) sauter($('monAvatar'));
     } catch (e) {
       msg(e.message, 'erreur');
     } finally {
@@ -420,10 +576,12 @@
     code = '';
     memoire.ecrire('pigeCode', '');
     ['vueChoix', 'vueProgres', 'vuePigee', 'btnSortir'].forEach(id => { $(id).hidden = true; });
+    ['monAvatar', 'pAvatar'].forEach(id => { $(id).replaceChildren(); $(id).hidden = true; $(id).style.animation = ''; });
     $('scene').hidden = false;
     $('cadeau').classList.remove('ouvert');
     $('indice').hidden = false;
     $('revelation').classList.remove('visible');
+    $('revelation').style.animation = '';
     $('vueCode').hidden = false;
     $('code').value = '';
     $('sous').textContent = 'Entre ton code pour commencer.';

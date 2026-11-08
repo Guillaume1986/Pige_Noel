@@ -205,14 +205,17 @@ function etat(p, parts) {
   if (pige) {
     const pa = pige.paires.find(x => x.donneur === p.nom);
     const r = pa && parts.find(x => x.nom === pa.receveur);
-    if (r) pigee = { nom: r.nom, choix: r.choix.filter(Boolean) };
+    if (r) pigee = { nom: r.nom, choix: r.choix.filter(Boolean), avatar: avatarDe(r.nom) };
   }
   return {
     nom: p.nom,
+    avatar: avatarDe(p.nom),
     choix: p.choix,
     inscrits: parts.filter(estInscrit).length,
     total: parts.length,
     enAttente: parts.filter(x => !estInscrit(x)).map(x => x.nom),
+    // la famille, pour la guirlande de visages (nom, a répondu ou non, personnage)
+    famille: parts.map(x => ({ nom: x.nom, inscrit: estInscrit(x), avatar: avatarDe(x.nom) })),
     pigeFaite: !!pige,
     pigee: pigee,
     budget: CONFIG.budget,
@@ -353,6 +356,18 @@ function lireParticipants() {
 }
 
 function estInscrit(p) { return p.choix.every(Boolean); }
+
+/**
+ * Personnage dessiné de la personne (fichier Avatars.gs, facultatif).
+ * Les personnages restent dans Apps Script : le site ne les reçoit qu'après un code valide.
+ */
+function avatarDe(nom) {
+  if (typeof AVATARS === 'undefined') return '';
+  const cle = n => String(n).normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().replace(/[^a-z]/g, '');
+  const k = cle(nom);
+  for (const n in AVATARS) if (cle(n) === k) return AVATARS[n];
+  return '';
+}
 
 function validerParticipants(parts) {
   const err = [];
