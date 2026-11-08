@@ -44,6 +44,11 @@ function onOpen() {
 
 function preparer() {
   const ss = SpreadsheetApp.getActive();
+  // Feuille créée à partir d'un fichier importé : on renomme l'onglet qui contient déjà les codes.
+  if (!ss.getSheetByName(ONGLET_PART)) {
+    const existant = ss.getSheets().find(f => String(f.getRange(1, 1).getValue()).trim() === 'Code');
+    if (existant) existant.setName(ONGLET_PART);
+  }
   [[ONGLET_PART, ENTETES_PART], [ONGLET_HIST, ENTETES_HIST]].forEach(([nom, entetes]) => {
     const f = ss.getSheetByName(nom) || ss.insertSheet(nom);
     f.getRange(1, 1, 1, entetes.length).setValues([entetes]).setFontWeight('bold');
