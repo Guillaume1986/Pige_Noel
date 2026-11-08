@@ -87,7 +87,7 @@ function envoyerInvitations() {
   const err = validerParticipants(parts);
   if (err.length) return alerte('À corriger avant l’envoi :\n- ' + err.join('\n- '));
   if (!confirmer('Envoyer une invitation à ' + parts.length + ' participant(s)?')) return;
-  parts.forEach(p => {
+  parts.filter(p => p.courriel).forEach(p => {
     const lien = url + '?code=' + encodeURIComponent(p.code);
     MailApp.sendEmail({
       to: p.courriel,
@@ -304,6 +304,7 @@ function envoyerCourrielsPige(pige, parts, tous) {
   const echecs = [];
   pige.paires.forEach(pa => {
     if (pa.envoye && !tous) return;
+    if (!(parNom[pa.donneur] || {}).courriel) return; // pas de courriel : la pige se voit sur le site
     try {
       const d = parNom[pa.donneur], r = parNom[pa.receveur];
       MailApp.sendEmail({
@@ -383,7 +384,8 @@ function validerParticipants(parts) {
   });
   parts.forEach(p => {
     if (!p.code) err.push(p.nom + ' : aucun code (lance « Générer les codes »)');
-    if (!/^\S+@\S+\.\S+$/.test(p.courriel)) err.push(p.nom + ' : courriel manquant ou invalide');
+    // le courriel est facultatif : sans courriel, la personne voit sa pige sur le site
+    if (p.courriel && !/^\S+@\S+\.\S+$/.test(p.courriel)) err.push(p.nom + ' : courriel invalide');
     if (p.conjoint) {
       const c = parNom[p.conjoint];
       if (!c) err.push(p.nom + ' : conjoint(e) « ' + p.conjoint + ' » introuvable dans la colonne Nom');
